@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -34,7 +33,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
                 <div class="sidebar-brand-icon rotate-n-15">
                     <img src="img/tokyo-logo.png" alt="" style="height: 50px; width: 50px;">
                 </div>
@@ -46,7 +45,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="index.php">
                     <i class="fas fa-fw fa-address-book"></i>
                     <span>Reglamento</span></a>
             </li>
@@ -68,17 +67,10 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Productos:</h6>
-                        <a class="collapse-item" href="buttons.html">Playeras</a>
-                        <a class="collapse-item" href="cards.html">Viniles</a>
+                        <a class="collapse-item" href="products.php">Productos</a>
+                        <a class="collapse-item" href="vinyls.php">Viniles</a>
                     </div>
                 </div>
-            </li>
-
-            <!-- Nav Item - Products -->
-            <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Productos</span></a>
             </li>
 
             <!-- Nav Item - Charts -->
