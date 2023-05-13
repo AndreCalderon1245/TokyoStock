@@ -23,14 +23,6 @@ if (isset($_GET['product_code'])) {
     $result = $conexion->prepare($query);
     $result->bindParam(":product_code", $product_code);
     $result->execute();
-    $row = $result->fetch(PDO::FETCH_LAZY);
-    $name = $row["name"];
-    $color = $row["color"];
-    $size = $row["size"];
-    $gender = $row["gender"];
-    $stock = $row["stock"];
-    $description = $row["description"];
-    $purcharse_cost = $row["purcharse_cost"];
 }
 
 if (isset($_POST['insert'])) {

@@ -6,40 +6,20 @@ if (isset($_GET['product_code'])) {
     $result = $conexion->prepare($query);
     $result->bindParam(":product_code", $product_code);
     $result->execute();
-    $row = $result->fetch(PDO::FETCH_LAZY);
-    $name = $row["name"];
-    $color = $row["color"];
-    $size = $row["size"];
-    $gender = $row["gender"];
-    $stock = $row["stock"];
-    $description = $row["description"];
-    $purcharse_cost = $row["purcharse_cost"];
 }
 
-if (isset($_POST['edit'])) {
+if (isset($_POST['increase'])) {
     // Recolectamos los datos del método POST
     $product_code = (isset($_GET['product_code'])) ? $_GET['product_code'] : "";
-    $name = (isset($_POST["name"]) ? $_POST["name"] : "");
-    $color = (isset($_POST["color"]) ? $_POST["color"] : "");
-    $size = (isset($_POST["size"]) ? $_POST["size"] : "");
-    $gender = (isset($_POST["gender"]) ? $_POST["gender"] : "");
     $stock = (isset($_POST["stock"]) ? $_POST["stock"] : "");
-    $description = (isset($_POST["description"]) ? $_POST["description"] : "");
-    $purcharse_cost = (isset($_POST["purcharse_cost"]) ? $_POST["purcharse_cost"] : "");
 
-    // Prepara la insercción de los datos   
-    $query = "UPDATE tbl_product SET name=:name, color=:color, size=:size, gender=:gender, stock=:stock, description=:description, purcharse_cost=:purcharse_cost WHERE product_code=:product_code";
+    // Prepara la actualización de los datos   
+    $query = "UPDATE tbl_product SET stock=stock + :stock WHERE product_code=:product_code";
 
     // Asignando los valores que vienen del método POST
     $result = $conexion->prepare($query);
     $result->bindParam(":product_code", $product_code);
-    $result->bindParam(":name", $name);
-    $result->bindParam(":color", $color);
-    $result->bindParam(":size", $size);
-    $result->bindParam(":gender", $gender);
     $result->bindParam(":stock", $stock);
-    $result->bindParam(":description", $description);
-    $result->bindParam(":purcharse_cost", $purcharse_cost);
     $result->execute();
 
     header('Location: index.php');
@@ -156,11 +136,11 @@ if (isset($_POST['edit'])) {
                         <div class="form-group">
                             <label for="stock" class="form-label">Cantidad</label>
                             <div class="input-group">
-                                <button name="decrease" type="button" class="btn btn-danger">
+                                <button name="decrease" type="button" class="btn btn-danger" id="decrease-btn">
                                     <i class="bi bi-dash-lg"></i>
                                 </button>
-                                <input type="number" id="stock" name="stock" class="form-control" placeholder="Cantidad de producto" value="<?php echo $stock; ?>" required>
-                                <button name="increase" type="button" class="btn btn-success">
+                                <input type="number" id="stock" name="stock" class="form-control text-center" placeholder="Cantidad de producto" value="0" required>
+                                <button name="increase" type="button" class="btn btn-success" id="increase-btn">
                                     <i class="bi bi-plus-lg"></i>
                                 </button>
                             </div>
@@ -168,14 +148,14 @@ if (isset($_POST['edit'])) {
                 </div>
             <?php endif; ?>
             <div class="modal-footer">
-                <button name="edit" type="submit" class="btn btn-success">Guardar</button>
+                <button name="increase" type="submit" class="btn btn-success">Guardar</button>
                 </form>
-                <button type="submit" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                <button id="close" name="close" type="submit" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
     </div>
 </div>
-<!-- /.edit-container -->
+<!-- /.increase-container -->
 
 <script>
     // crear el elemento "backdrop"
@@ -195,7 +175,7 @@ if (isset($_POST['edit'])) {
         }
     });
 
-    document.querySelector('#exampleModalCenter .btn-danger').addEventListener('click', function() {
+    document.querySelector('#exampleModalCenter #close').addEventListener('click', function() {
         document.querySelector('#exampleModalCenter').style.display = 'none';
 
         // eliminar el elemento "backdrop"
@@ -204,6 +184,20 @@ if (isset($_POST['edit'])) {
             backdrop.remove();
         }
     });
+
+    // crear el elementos de los botones
+    const decreaseBtn = document.getElementById("decrease-btn");
+    const increaseBtn = document.getElementById("increase-btn");
+    const stockInput = document.getElementById("stock");
+
+    decreaseBtn.addEventListener("click", () => {
+        if (parseInt(stockInput.value) > 0) {
+            stockInput.value = parseInt(stockInput.value) - 1;
+        }
+    });
+
+    increaseBtn.addEventListener("click", () => {
+        stockInput.value = parseInt(stockInput.value) + 1;
+    });
 </script>
-<!-- /.edit-container -->
 <?php include("../../templates/footer.php"); ?>

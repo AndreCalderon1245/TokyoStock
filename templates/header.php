@@ -45,7 +45,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.php">
+                <a class="nav-link" href="../../index.php">
                     <i class="fas fa-fw fa-address-book"></i>
                     <span>Reglamento</span></a>
             </li>
@@ -67,7 +67,7 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Productos:</h6>
-                        <a class="collapse-item" href="index.php">Productos</a>
+                        <a class="collapse-item" href="../products/index.php">Productos</a>
                         <a class="collapse-item" href="../vinyls/index.php">Viniles</a>
                     </div>
                 </div>
