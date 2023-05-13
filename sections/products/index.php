@@ -10,10 +10,10 @@
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
-    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+        <div class="card-header py-3 d-flex align-items-center justify-content-between">
             <h6 class="m-0 font-weight-bold text-primary">Productos</h6>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNew">
-                <i class="bi bi-plus-circle-fill"></i> Nuevo
+            <button name="insert" type="button" class="btn btn-primary" onclick="window.location.href='insert.php'">
+            <i class="bi bi-plus-circle-fill"></i> Nuevo
             </button>
         </div>
         <div class="card-body">
@@ -21,13 +21,14 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
+                            <th>Código de producto</th>
                             <th>Nombre</th>
                             <th>Color</th>
                             <th>Tamaño</th>
                             <th>Género</th>
                             <th>Cantidad</th>
                             <th>Descripción</th>
-                            <th>Precio</th>
+                            <th>Precio unitario</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -41,6 +42,7 @@
                             foreach ($result as $row) {
                         ?>
                                 <tr>
+                                    <td style="text-transform: uppercase;"><?php echo $row['product_code']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['name']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['color']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['size']; ?></td>
@@ -50,21 +52,21 @@
                                     <td style="text-transform: uppercase;">$ <?php echo $row['purcharse_cost']; ?></td>
 
                                     <td>
-                                        <a class="btn btn-danger" href="">
+                                        <button name="decrease" type="button" class="btn btn-danger" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='decrease.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-dash-lg"></i>
-                                        </a>
+                                        </button>
 
-                                        <a class="btn btn-success" href="">
+                                        <button name="increase" type="button" class="btn btn-success" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='increase.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-plus-lg"></i>
-                                        </a>
+                                        </button>
 
-                                        <button name="editID" type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModalCenter" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='edit.php?product_code='+this.getAttribute('data-id')">
+                                        <button name="edit" type="button" class="btn btn-warning" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='edit.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
 
-                                        <a class="btn btn-secondary" href="">
+                                        <button name="delete" type="button" class="btn btn-secondary" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='delete.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-trash3"></i>
-                                        </a>
+                                        </button>
                                     </td>
                                 </tr>
                             <?php
@@ -85,5 +87,11 @@
 
 </div>
 <!-- /.container-fluid -->
+<script>
+  function redirectToInsertPage(button) {
+    var productCode = button.getAttribute('data-id');
+    window.location.href = 'insert.php?product_code=' + productCode;
+  }
+</script>
 
 <?php include("../../templates/footer.php"); ?>

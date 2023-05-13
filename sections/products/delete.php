@@ -16,38 +16,22 @@ if (isset($_GET['product_code'])) {
     $purcharse_cost = $row["purcharse_cost"];
 }
 
-if (isset($_POST['edit'])) {
+if (isset($_POST['delete'])) {
     // Recolectamos los datos del método POST
     $product_code = (isset($_GET['product_code'])) ? $_GET['product_code'] : "";
-    $name = (isset($_POST["name"]) ? $_POST["name"] : "");
-    $color = (isset($_POST["color"]) ? $_POST["color"] : "");
-    $size = (isset($_POST["size"]) ? $_POST["size"] : "");
-    $gender = (isset($_POST["gender"]) ? $_POST["gender"] : "");
-    $stock = (isset($_POST["stock"]) ? $_POST["stock"] : "");
-    $description = (isset($_POST["description"]) ? $_POST["description"] : "");
-    $purcharse_cost = (isset($_POST["purcharse_cost"]) ? $_POST["purcharse_cost"] : "");
 
     // Prepara la insercción de los datos   
-    $query = "UPDATE tbl_product SET name=:name, color=:color, size=:size, gender=:gender, stock=:stock, description=:description, purcharse_cost=:purcharse_cost WHERE product_code=:product_code";
+    $query = "DELETE FROM tbl_product WHERE product_code=:product_code";
 
     // Asignando los valores que vienen del método POST
     $result = $conexion->prepare($query);
     $result->bindParam(":product_code", $product_code);
-    $result->bindParam(":name", $name);
-    $result->bindParam(":color", $color);
-    $result->bindParam(":size", $size);
-    $result->bindParam(":gender", $gender);
-    $result->bindParam(":stock", $stock);
-    $result->bindParam(":description", $description);
-    $result->bindParam(":purcharse_cost", $purcharse_cost);
     $result->execute();
 
     header('Location: index.php');
 }
 ?>
-
 <?php include("../../templates/header.php"); ?>
-
 <!-- Begin Page Content -->
 <div class="container-fluid">
 
@@ -136,12 +120,12 @@ if (isset($_POST['edit'])) {
 </div>
 <!-- /.container-fluid -->
 
-<!-- /.edit-container -->
+<!-- /.delete-container -->
 <div class="modal show" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: block;">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Editar datos del producto</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Eliminar registro del producto</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -155,19 +139,19 @@ if (isset($_POST['edit'])) {
                         </div>
                         <div class="form-group">
                             <label for="name" class="form-label">Nombre:</label>
-                            <input type="text" id="name" name="name" class="form-control" value="<?php echo $name ?>" required>
+                            <input type="text" id="name" name="name" class="form-control" value="<?php echo $name ?>" readonly>
                         </div>
                         <div class="form-group">
                             <label for="color">Color:</label><br>
-                            <input type="text" name="color" id="color" class="form-control" placeholder="" value="<?php echo $color ?>" required>
+                            <input type="text" name="color" id="color" class="form-control" placeholder="" value="<?php echo $color ?>" readonly>
                         </div>
                         <div class="form-group">
                             <label for="size" class="form-label">Tamaño</label>
-                            <input type="text" id="size" name="size" class="form-control" value="<?php echo $size ?>" required>
+                            <input type="text" id="size" name="size" class="form-control" value="<?php echo $size ?>" readonly>
                         </div>
                         <div class="form-group">
                             <label for="gender" class="form-label">Género:</label>
-                            <select class="form-control" aria-label="Default select example" name="gender" required>
+                            <select class="form-control" aria-label="Default select example" name="gender" disabled>
                                 <option selected>Selecciona el género:</option>
                                 <option value="Dama" <?php if ($gender == 'Dama') echo 'selected'; ?>>Dama</option>
                                 <option value="Caballero" <?php if ($gender == 'Caballero') echo 'selected'; ?>>Caballero</option>
@@ -176,27 +160,27 @@ if (isset($_POST['edit'])) {
                         </div>
                         <div class="form-group">
                             <label for="stock" class="form-label">Cantidad</label>
-                            <input type="number" id="stock" name="stock" class="form-control" placeholder="Cantidad de producto" value="<?php echo $stock; ?>" required>
+                            <input type="number" id="stock" name="stock" class="form-control" placeholder="Cantidad de producto" value="<?php echo $stock; ?>" readonly>
                         </div>
                         <div class="form-group">
                             <label for="description" class="form-label">Descripción</label>
-                            <input type="text" id="description" name="description" class="form-control" value="<?php echo $description; ?>" required>
+                            <input type="text" id="description" name="description" class="form-control" value="<?php echo $description; ?>" readonly>
                         </div>
                         <div class="form-group">
                             <label for="purcharse_cost" class="form-label">Precio</label>
-                            <input type="text" id="purcharse_cost" name="purcharse_cost" class="form-control" value="<?php echo $purcharse_cost; ?>" required>
+                            <input type="text" id="purcharse_cost" name="purcharse_cost" class="form-control" value="<?php echo $purcharse_cost; ?>" readonly>
                         </div>
                 </div>
             <?php endif; ?>
             <div class="modal-footer">
-                <button name="edit" type="submit" class="btn btn-success">Guardar</button>
+                <button name="delete" type="submit" class="btn btn-success">Eliminar</button>
                 </form>
                 <button type="submit" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
     </div>
 </div>
-<!-- /.edit-container -->
+<!-- /.delete-container -->
 
 <script>
     // crear el elemento "backdrop"
@@ -226,5 +210,12 @@ if (isset($_POST['edit'])) {
         }
     });
 </script>
-<!-- /.edit-container -->
+
+<script>
+    function redirectToInsertPage(button) {
+        var productCode = button.getAttribute('data-id');
+        window.location.href = 'insert.php?product_code=' + productCode;
+    }
+</script>
+
 <?php include("../../templates/footer.php"); ?>

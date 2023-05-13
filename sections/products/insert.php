@@ -1,5 +1,22 @@
 <?php include("../../bd.php"); ?>
 <?php
+function generateProductCode($name, $color, $size, $gender)
+{
+    $nameParts = explode(" ", $name);
+    $firstLetters = "";
+    foreach ($nameParts as $part) {
+        $firstLetters .= substr($part, 0, 1);
+    }
+    $colorCode = substr($color, 0, 1);
+    $sizeCode = strtoupper(substr($size, 0, 1));
+    $genderCode = strtoupper(substr($gender, 0, 1));
+    $randomNum = str_pad(rand(0, 999), 3, "0", STR_PAD_LEFT);
+
+    $productCode = $firstLetters . "-" . $colorCode . $sizeCode . $genderCode . "-" . $randomNum;
+
+    return $productCode;
+}
+
 if (isset($_GET['product_code'])) {
     $product_code = (isset($_GET['product_code'])) ? $_GET['product_code'] : "";
     $query = "SELECT * FROM tbl_product WHERE product_code=:product_code";
@@ -16,9 +33,8 @@ if (isset($_GET['product_code'])) {
     $purcharse_cost = $row["purcharse_cost"];
 }
 
-if (isset($_POST['edit'])) {
+if (isset($_POST['insert'])) {
     // Recolectamos los datos del método POST
-    $product_code = (isset($_GET['product_code'])) ? $_GET['product_code'] : "";
     $name = (isset($_POST["name"]) ? $_POST["name"] : "");
     $color = (isset($_POST["color"]) ? $_POST["color"] : "");
     $size = (isset($_POST["size"]) ? $_POST["size"] : "");
@@ -27,8 +43,10 @@ if (isset($_POST['edit'])) {
     $description = (isset($_POST["description"]) ? $_POST["description"] : "");
     $purcharse_cost = (isset($_POST["purcharse_cost"]) ? $_POST["purcharse_cost"] : "");
 
+    $product_code = generateProductCode($name, $color, $size, $gender);
+
     // Prepara la insercción de los datos   
-    $query = "UPDATE tbl_product SET name=:name, color=:color, size=:size, gender=:gender, stock=:stock, description=:description, purcharse_cost=:purcharse_cost WHERE product_code=:product_code";
+    $query = "INSERT INTO tbl_product(id, product_code, name, color, size, gender, stock, description, purcharse_cost) VALUES (null, :product_code, :name, :color, :size, :gender, :stock, :description, :purcharse_cost)";
 
     // Asignando los valores que vienen del método POST
     $result = $conexion->prepare($query);
@@ -136,12 +154,12 @@ if (isset($_POST['edit'])) {
 </div>
 <!-- /.container-fluid -->
 
-<!-- /.edit-container -->
+<!-- /.insert-container -->
 <div class="modal show" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: block;">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Editar datos del producto</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Ingresar datos del nuevo producto</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -149,54 +167,54 @@ if (isset($_POST['edit'])) {
             <?php if (isset($row)) : ?>
                 <div class="modal-body">
                     <form action="" method="POST">
-                        <div class="form-group">
+                        <!--<div class="form-group">
                             <label for="name" class="form-label">Código del producto:</label>
-                            <input type="text" id="name" name="name" class="form-control" value="<?php echo $product_code ?>" readonly>
-                        </div>
+                            <input type="text" id="name" name="name" class="form-control" value="" readonly>
+                        </div>-->
                         <div class="form-group">
                             <label for="name" class="form-label">Nombre:</label>
-                            <input type="text" id="name" name="name" class="form-control" value="<?php echo $name ?>" required>
+                            <input type="text" id="name" name="name" class="form-control" placeholder="Escribe el nombre" value="" required>
                         </div>
                         <div class="form-group">
                             <label for="color">Color:</label><br>
-                            <input type="text" name="color" id="color" class="form-control" placeholder="" value="<?php echo $color ?>" required>
+                            <input type="text" name="color" id="color" class="form-control" placeholder="Escribe el color" value="" required>
                         </div>
                         <div class="form-group">
-                            <label for="size" class="form-label">Tamaño</label>
-                            <input type="text" id="size" name="size" class="form-control" value="<?php echo $size ?>" required>
+                            <label for="size" class="form-label">Tamaño:</label>
+                            <input type="text" id="size" name="size" class="form-control" placeholder="Escribe el tamaño" value="Escribe el tamaño" required>
                         </div>
                         <div class="form-group">
                             <label for="gender" class="form-label">Género:</label>
                             <select class="form-control" aria-label="Default select example" name="gender" required>
                                 <option selected>Selecciona el género:</option>
-                                <option value="Dama" <?php if ($gender == 'Dama') echo 'selected'; ?>>Dama</option>
-                                <option value="Caballero" <?php if ($gender == 'Caballero') echo 'selected'; ?>>Caballero</option>
-                                <option value="Unisex" <?php if ($gender == 'Unisex') echo 'selected'; ?>>Unisex</option>
+                                <option value="Dama">Dama</option>
+                                <option value="Caballero">Caballero</option>
+                                <option value="Unisex">Unisex</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="stock" class="form-label">Cantidad</label>
-                            <input type="number" id="stock" name="stock" class="form-control" placeholder="Cantidad de producto" value="<?php echo $stock; ?>" required>
+                            <label for="stock" class="form-label">Cantidad:</label>
+                            <input type="number" id="stock" name="stock" class="form-control" placeholder="Cantidad de producto" value="" required>
                         </div>
                         <div class="form-group">
-                            <label for="description" class="form-label">Descripción</label>
-                            <input type="text" id="description" name="description" class="form-control" value="<?php echo $description; ?>" required>
+                            <label for="description" class="form-label">Descripción;</label>
+                            <input type="text" id="description" name="description" class="form-control" placeholder="Escribe una descripción" value="" required>
                         </div>
                         <div class="form-group">
-                            <label for="purcharse_cost" class="form-label">Precio</label>
-                            <input type="text" id="purcharse_cost" name="purcharse_cost" class="form-control" value="<?php echo $purcharse_cost; ?>" required>
+                            <label for="purcharse_cost" class="form-label">Precio:</label>
+                            <input type="text" id="purcharse_cost" name="purcharse_cost" class="form-control" placeholder="Escribe el precio" value="" required>
                         </div>
                 </div>
             <?php endif; ?>
             <div class="modal-footer">
-                <button name="edit" type="submit" class="btn btn-success">Guardar</button>
+                <button name="insert" type="submit" class="btn btn-success">Guardar</button>
                 </form>
                 <button type="submit" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
     </div>
 </div>
-<!-- /.edit-container -->
+<!-- /.insert-container -->
 
 <script>
     // crear el elemento "backdrop"

@@ -141,7 +141,7 @@ if (isset($_POST['edit'])) {
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Editar datos del producto</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Salidas de producto</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -154,37 +154,16 @@ if (isset($_POST['edit'])) {
                             <input type="text" id="name" name="name" class="form-control" value="<?php echo $product_code ?>" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="name" class="form-label">Nombre:</label>
-                            <input type="text" id="name" name="name" class="form-control" value="<?php echo $name ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="color">Color:</label><br>
-                            <input type="text" name="color" id="color" class="form-control" placeholder="" value="<?php echo $color ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="size" class="form-label">Tamaño</label>
-                            <input type="text" id="size" name="size" class="form-control" value="<?php echo $size ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="gender" class="form-label">Género:</label>
-                            <select class="form-control" aria-label="Default select example" name="gender" required>
-                                <option selected>Selecciona el género:</option>
-                                <option value="Dama" <?php if ($gender == 'Dama') echo 'selected'; ?>>Dama</option>
-                                <option value="Caballero" <?php if ($gender == 'Caballero') echo 'selected'; ?>>Caballero</option>
-                                <option value="Unisex" <?php if ($gender == 'Unisex') echo 'selected'; ?>>Unisex</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
                             <label for="stock" class="form-label">Cantidad</label>
-                            <input type="number" id="stock" name="stock" class="form-control" placeholder="Cantidad de producto" value="<?php echo $stock; ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="description" class="form-label">Descripción</label>
-                            <input type="text" id="description" name="description" class="form-control" value="<?php echo $description; ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="purcharse_cost" class="form-label">Precio</label>
-                            <input type="text" id="purcharse_cost" name="purcharse_cost" class="form-control" value="<?php echo $purcharse_cost; ?>" required>
+                            <div class="input-group">
+                                <button name="decrease" type="button" class="btn btn-danger">
+                                    <i class="bi bi-dash-lg"></i>
+                                </button>
+                                <input type="number" id="stock" name="stock" class="form-control" placeholder="Cantidad de producto" value="<?php echo $stock; ?>" required>
+                                <button name="increase" type="button" class="btn btn-success">
+                                    <i class="bi bi-plus-lg"></i>
+                                </button>
+                            </div>
                         </div>
                 </div>
             <?php endif; ?>
