@@ -1,10 +1,10 @@
-<?php include("bd.php"); ?>
+<?php include("../../bd.php"); ?>
 <?php
-if (isset($_GET['txtID'])) {
-    $txtID = (isset($_GET['txtID'])) ? $_GET['txtID'] : "";
-    $query = "SELECT * FROM tbl_product WHERE id=:id";
+if (isset($_GET['product_code'])) {
+    $product_code = (isset($_GET['product_code'])) ? $_GET['product_code'] : "";
+    $query = "SELECT * FROM tbl_product WHERE product_code=:product_code";
     $result = $conexion->prepare($query);
-    $result->bindParam(":id", $txtID);
+    $result->bindParam(":product_code", $product_code);
     $result->execute();
     $row = $result->fetch(PDO::FETCH_LAZY);
     $name = $row["name"];
@@ -17,8 +17,10 @@ if (isset($_GET['txtID'])) {
 }
 
 if (isset($_POST['update'])) {
+    print_r($_POST);
     // Recolectamos los datos del método POST
     $txtID = (isset($_POST['txtID'])) ? $_POST['txtID'] : "";
+    $product_code = (isset($_POST['product_code'])) ? $_POST['product_code'] : "";
     $name = (isset($_POST["name"]) ? $_POST["name"] : "");
     $color = (isset($_POST["color"]) ? $_POST["color"] : "");
     $size = (isset($_POST["size"]) ? $_POST["size"] : "");
@@ -28,11 +30,11 @@ if (isset($_POST['update'])) {
     $purcharse_cost = (isset($_POST["purcharse_cost"]) ? $_POST["purcharse_cost"] : "");
 
     // Prepara la insercción de los datos   
-    $query = "UPDATE tbl_product SET name=:name, color=:color, size=:size, gender=:gender, stock=:stock, description=:description, purcharse_cost=:purcharse_cost WHERE id=:id";
+    $query = "UPDATE tbl_product SET name=:name, color=:color, size=:size, gender=:gender, stock=:stock, description=:description, purcharse_cost=:purcharse_cost WHERE product_code=:product_code";
 
     // Asignando los valores que vienen del método POST
     $result = $conexion->prepare($query);
-    $result->bindParam(":id", $txtID);
+    $result->bindParam(":product_code", $product_code);
     $result->bindParam(":name", $name);
     $result->bindParam(":color", $color);
     $result->bindParam(":size", $size);
@@ -46,7 +48,7 @@ if (isset($_POST['update'])) {
 }
 ?>
 
-<?php include("templates/header.php"); ?>
+<?php include("../../templates/header.php"); ?>
 
 <!-- Begin Page Content -->
 <div class="container-fluid">
@@ -105,7 +107,7 @@ if (isset($_POST['update'])) {
                                             <i class="bi bi-plus-lg"></i>
                                         </a>
 
-                                        <button name="editID" type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModalCenter" data-id="<?php echo $row['id']; ?>" onclick="window.location.href='edit.php?txtID='+this.getAttribute('data-id')">
+                                        <button name="editID" type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModalCenter" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='edit.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
 
@@ -147,6 +149,7 @@ if (isset($_POST['update'])) {
                 <div class="modal-body">
                     <form action="" method="POST">
                         <input type="hidden" name="txtID" value="<?php echo $row['id']; ?>">
+                        <input type="hidden" name="product_code" value="<?php echo $row['product_code']; ?>">
                         <div class="form-group">
                             <label for="name" class="form-label">Nombre:</label>
                             <input type="text" id="name" name="name" class="form-control" value="<?php echo $name ?>" required>
@@ -163,9 +166,9 @@ if (isset($_POST['update'])) {
                             <label for="gender" class="form-label">Género:</label>
                             <select class="form-control" aria-label="Default select example" name="gender" required>
                                 <option selected>Selecciona el género:</option>
-                                <option value="D" <?php if ($gender == 'D') echo 'selected'; ?>>Dama</option>
-                                <option value="C" <?php if ($gender == 'C') echo 'selected'; ?>>Caballero</option>
-                                <option value="SG" <?php if ($gender == 'SG') echo 'selected'; ?>>Unisex</option>
+                                <option value="Dama" <?php if ($gender == 'Dama') echo 'selected'; ?>>Dama</option>
+                                <option value="Caballero" <?php if ($gender == 'Caballero') echo 'selected'; ?>>Caballero</option>
+                                <option value="Unisex" <?php if ($gender == 'Unisex') echo 'selected'; ?>>Unisex</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -220,4 +223,4 @@ if (isset($_POST['update'])) {
     });
 </script>
 <!-- /.edit-container -->
-<?php include("templates/footer.php"); ?>
+<?php include("../../templates/footer.php"); ?>
