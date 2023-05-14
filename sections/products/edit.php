@@ -11,24 +11,22 @@ if (isset($_GET['product_code'])) {
     $color = $row["color"];
     $size = $row["size"];
     $gender = $row["gender"];
-    $stock = $row["stock"];
     $description = $row["description"];
-    $purcharse_cost = $row["purcharse_cost"];
+    $unit_price = $row["unit_price"];
 }
 
-if (isset($_POST['edit'])) {
+if (isset($_POST['confirm'])) {
     // Recolectamos los datos del método POST
     $product_code = (isset($_GET['product_code'])) ? $_GET['product_code'] : "";
     $name = (isset($_POST["name"]) ? $_POST["name"] : "");
     $color = (isset($_POST["color"]) ? $_POST["color"] : "");
     $size = (isset($_POST["size"]) ? $_POST["size"] : "");
     $gender = (isset($_POST["gender"]) ? $_POST["gender"] : "");
-    $stock = (isset($_POST["stock"]) ? $_POST["stock"] : "");
     $description = (isset($_POST["description"]) ? $_POST["description"] : "");
-    $purcharse_cost = (isset($_POST["purcharse_cost"]) ? $_POST["purcharse_cost"] : "");
+    $unit_price = (isset($_POST["unit_price"]) ? $_POST["unit_price"] : "");
 
     // Prepara la insercción de los datos   
-    $query = "UPDATE tbl_product SET name=:name, color=:color, size=:size, gender=:gender, stock=:stock, description=:description, purcharse_cost=:purcharse_cost WHERE product_code=:product_code";
+    $query = "UPDATE tbl_product SET name=:name, color=:color, size=:size, gender=:gender, description=:description, unit_price=:unit_price WHERE product_code=:product_code";
 
     // Asignando los valores que vienen del método POST
     $result = $conexion->prepare($query);
@@ -37,9 +35,8 @@ if (isset($_POST['edit'])) {
     $result->bindParam(":color", $color);
     $result->bindParam(":size", $size);
     $result->bindParam(":gender", $gender);
-    $result->bindParam(":stock", $stock);
     $result->bindParam(":description", $description);
-    $result->bindParam(":purcharse_cost", $purcharse_cost);
+    $result->bindParam(":unit_price", $unit_price);
     $result->execute();
 
     header('Location: index.php');
@@ -97,22 +94,18 @@ if (isset($_POST['edit'])) {
                                     <td style="text-transform: uppercase;"><?php echo $row['gender']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['stock']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['description']; ?></td>
-                                    <td style="text-transform: uppercase;">$ <?php echo $row['purcharse_cost']; ?></td>
-
-                                    <td>
-                                        <button name="decrease" type="button" class="btn btn-danger" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='decrease.php?product_code='+this.getAttribute('data-id')">
+                                    <td style="text-transform: uppercase;">$ <?php echo $row['unit_price']; ?></td>
+                                    <td class="d-inline-flex">
+                                        <button name="decrease" type="button" class="btn btn-danger mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='decrease.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-dash-lg"></i>
                                         </button>
-
-                                        <button name="increase" type="button" class="btn btn-success" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='increase.php?product_code='+this.getAttribute('data-id')">
+                                        <button name="increase" type="button" class="btn btn-success mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='increase.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-plus-lg"></i>
                                         </button>
-
-                                        <button name="edit" type="button" class="btn btn-warning" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='edit.php?product_code='+this.getAttribute('data-id')">
+                                        <button name="edit" type="button" class="btn btn-warning mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='edit.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
-
-                                        <button name="delete" type="button" class="btn btn-secondary" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='delete.php?product_code='+this.getAttribute('data-id')">
+                                        <button name="delete" type="button" class="btn btn-secondary mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='delete.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-trash3"></i>
                                         </button>
                                     </td>
@@ -137,7 +130,7 @@ if (isset($_POST['edit'])) {
 <!-- /.container-fluid -->
 
 <!-- /.edit-container -->
-<div class="modal show" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: block;">
+<div class="modal show" id="editModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: block;">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -146,9 +139,8 @@ if (isset($_POST['edit'])) {
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <?php if (isset($row)) : ?>
                 <div class="modal-body">
-                    <form action="" method="POST">
+                    <form id="editForm">
                         <div class="form-group">
                             <label for="name" class="form-label">Código del producto:</label>
                             <input type="text" id="name" name="name" class="form-control" value="<?php echo $product_code ?>" readonly>
@@ -175,22 +167,17 @@ if (isset($_POST['edit'])) {
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="stock" class="form-label">Cantidad</label>
-                            <input type="number" id="stock" name="stock" class="form-control" placeholder="Cantidad de producto" value="<?php echo $stock; ?>" required>
-                        </div>
-                        <div class="form-group">
                             <label for="description" class="form-label">Descripción</label>
                             <input type="text" id="description" name="description" class="form-control" value="<?php echo $description; ?>" required>
                         </div>
                         <div class="form-group">
-                            <label for="purcharse_cost" class="form-label">Precio</label>
-                            <input type="text" id="purcharse_cost" name="purcharse_cost" class="form-control" value="<?php echo $purcharse_cost; ?>" required>
+                            <label for="unit_price" class="form-label">Precio</label>
+                            <input type="text" id="unit_price" name="unit_price" class="form-control" value="<?php echo $unit_price; ?>" required>
                         </div>
+                    </form>
                 </div>
-            <?php endif; ?>
             <div class="modal-footer">
-                <button name="edit" type="submit" class="btn btn-success">Guardar</button>
-                </form>
+                <button id="edit" name="edit" type="submit" class="btn btn-success">Guardar</button>
                 <button type="submit" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
@@ -198,7 +185,32 @@ if (isset($_POST['edit'])) {
 </div>
 <!-- /.edit-container -->
 
+<!-- /.confirm-container -->
+<div class="modal show" id="confirmModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">¿Estás seguro?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                <div class="modal-body">
+                        <div class="form-group">
+                        <label for="name" class="form-label">Estás a punto de <strong>MODIFICAR</strong> la información del producto con código "<strong><?php echo $product_code ?></strong>"</label>
+                        </div>
+                </div>
+            <div class="modal-footer">
+                <button name="confirm" type="submit" class="btn btn-success" formmethod="POST" form="editForm">Guardar</button>
+                <button type="submit" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.confirm-container -->
+
 <script>
+    // Apartir de aqui empieza el codigo de las funciones de los botones del editModalCenter
     // crear el elemento "backdrop"
     var backdrop = document.createElement('div');
     backdrop.className = 'modal-backdrop fade show';
@@ -206,8 +218,8 @@ if (isset($_POST['edit'])) {
     // agregar el elemento "backdrop" al final del <body>
     document.body.appendChild(backdrop);
 
-    document.querySelector('#exampleModalCenter .close').addEventListener('click', function() {
-        document.querySelector('#exampleModalCenter').style.display = 'none';
+    document.querySelector('#editModalCenter .close').addEventListener('click', function() {
+        document.querySelector('#editModalCenter').style.display = 'none';
 
         // eliminar el elemento "backdrop"
         var backdrop = document.querySelector('.modal-backdrop');
@@ -216,8 +228,34 @@ if (isset($_POST['edit'])) {
         }
     });
 
-    document.querySelector('#exampleModalCenter .btn-danger').addEventListener('click', function() {
-        document.querySelector('#exampleModalCenter').style.display = 'none';
+    document.querySelector('#editModalCenter .btn-danger').addEventListener('click', function() {
+        document.querySelector('#editModalCenter').style.display = 'none';
+
+        // eliminar el elemento "backdrop"
+        var backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
+    });
+
+    // Apartir de aqui empieza el codigo de las funciones de los botones del confirmModalCenter
+    document.querySelector('#editModalCenter #edit').addEventListener('click', function() {
+        document.querySelector('#editModalCenter').style.display = 'none';
+        document.querySelector('#confirmModalCenter').style.display = 'block';
+    });
+
+    document.querySelector('#confirmModalCenter .close').addEventListener('click', function() {
+        document.querySelector('#confirmModalCenter').style.display = 'none';
+
+        // eliminar el elemento "backdrop"
+        var backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
+    });
+
+    document.querySelector('#confirmModalCenter .btn-danger').addEventListener('click', function() {
+        document.querySelector('#confirmModalCenter').style.display = 'none';
 
         // eliminar el elemento "backdrop"
         var backdrop = document.querySelector('.modal-backdrop');

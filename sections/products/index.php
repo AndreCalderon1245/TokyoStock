@@ -4,16 +4,15 @@
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Tables</h1>
-    <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
-        For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p>
+    <h1 class="h3 mb-2 text-gray-800">Invetario de productos</h1>
+    <p class="mb-4">Registro de todos los bienes tangibles y en existentes dentro de la empresa, que pueden utilizarse para su alquiler, uso, transformación, consumo o venta.</p>
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex align-items-center justify-content-between">
             <h6 class="m-0 font-weight-bold text-primary">Productos</h6>
             <button name="insert" type="button" class="btn btn-primary" onclick="window.location.href='insert.php'">
-            <i class="bi bi-plus-circle-fill"></i> Nuevo
+                <i class="bi bi-plus-circle-fill"></i> Nuevo
             </button>
         </div>
         <div class="card-body">
@@ -49,22 +48,18 @@
                                     <td style="text-transform: uppercase;"><?php echo $row['gender']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['stock']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['description']; ?></td>
-                                    <td style="text-transform: uppercase;">$ <?php echo $row['purcharse_cost']; ?></td>
-
-                                    <td>
-                                        <button name="decrease" type="button" class="btn btn-danger" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='decrease.php?product_code='+this.getAttribute('data-id')">
+                                    <td style="text-transform: uppercase;">$ <?php echo $row['unit_price']; ?></td>
+                                    <td class="d-inline-flex">
+                                        <button name="decrease" type="button" class="btn btn-danger mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='decrease.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-dash-lg"></i>
                                         </button>
-
-                                        <button name="increase" type="button" class="btn btn-success" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='increase.php?product_code='+this.getAttribute('data-id')">
+                                        <button name="increase" type="button" class="btn btn-success mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='increase.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-plus-lg"></i>
                                         </button>
-
-                                        <button name="edit" type="button" class="btn btn-warning" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='edit.php?product_code='+this.getAttribute('data-id')">
+                                        <button name="edit" type="button" class="btn btn-warning mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='edit.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
-
-                                        <button name="delete" type="button" class="btn btn-secondary" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='delete.php?product_code='+this.getAttribute('data-id')">
+                                        <button name="delete" type="button" class="btn btn-secondary mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='delete.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-trash3"></i>
                                         </button>
                                     </td>
@@ -88,10 +83,10 @@
 </div>
 <!-- /.container-fluid -->
 <script>
-  function redirectToInsertPage(button) {
-    var productCode = button.getAttribute('data-id');
-    window.location.href = 'insert.php?product_code=' + productCode;
-  }
+    function redirectToInsertPage(button) {
+        var productCode = button.getAttribute('data-id');
+        window.location.href = 'insert.php?product_code=' + productCode;
+    }
 </script>
 
 <?php include("../../templates/footer.php"); ?>

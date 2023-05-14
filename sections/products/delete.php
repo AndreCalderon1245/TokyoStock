@@ -13,10 +13,10 @@ if (isset($_GET['product_code'])) {
     $gender = $row["gender"];
     $stock = $row["stock"];
     $description = $row["description"];
-    $purcharse_cost = $row["purcharse_cost"];
+    $unit_price = $row["unit_price"];
 }
 
-if (isset($_POST['delete'])) {
+if (isset($_POST['confirm'])) {
     // Recolectamos los datos del método POST
     $product_code = (isset($_GET['product_code'])) ? $_GET['product_code'] : "";
 
@@ -73,7 +73,7 @@ if (isset($_POST['delete'])) {
                         if (count($result) > 0) { // verificar si hay resultados
                             foreach ($result as $row) {
                         ?>
-                                <tr>
+                                <td class="d-inline-flex">
                                     <td style="text-transform: uppercase;"><?php echo $row['product_code']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['name']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['color']; ?></td>
@@ -81,22 +81,18 @@ if (isset($_POST['delete'])) {
                                     <td style="text-transform: uppercase;"><?php echo $row['gender']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['stock']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['description']; ?></td>
-                                    <td style="text-transform: uppercase;">$ <?php echo $row['purcharse_cost']; ?></td>
-
-                                    <td>
-                                        <button name="decrease" type="button" class="btn btn-danger" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='decrease.php?product_code='+this.getAttribute('data-id')">
+                                    <td style="text-transform: uppercase;">$ <?php echo $row['unit_price']; ?></td>
+                                    <td class="d-inline-flex">
+                                        <button name="decrease" type="button" class="btn btn-danger mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='decrease.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-dash-lg"></i>
                                         </button>
-
-                                        <button name="increase" type="button" class="btn btn-success" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='increase.php?product_code='+this.getAttribute('data-id')">
+                                        <button name="increase" type="button" class="btn btn-success mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='increase.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-plus-lg"></i>
                                         </button>
-
-                                        <button name="edit" type="button" class="btn btn-warning" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='edit.php?product_code='+this.getAttribute('data-id')">
+                                        <button name="edit" type="button" class="btn btn-warning mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='edit.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
-
-                                        <button name="delete" type="button" class="btn btn-secondary" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='delete.php?product_code='+this.getAttribute('data-id')">
+                                        <button name="delete" type="button" class="btn btn-secondary mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='delete.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-trash3"></i>
                                         </button>
                                     </td>
@@ -116,12 +112,11 @@ if (isset($_POST['delete'])) {
             </div>
         </div>
     </div>
-
 </div>
 <!-- /.container-fluid -->
 
 <!-- /.delete-container -->
-<div class="modal show" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: block;">
+<div class="modal show" id="deleteModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: block;">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -130,9 +125,8 @@ if (isset($_POST['delete'])) {
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <?php if (isset($row)) : ?>
                 <div class="modal-body">
-                    <form action="" method="POST">
+                    <form id="deleteForm">
                         <div class="form-group">
                             <label for="name" class="form-label">Código del producto:</label>
                             <input type="text" id="name" name="name" class="form-control" value="<?php echo $product_code ?>" readonly>
@@ -167,14 +161,13 @@ if (isset($_POST['delete'])) {
                             <input type="text" id="description" name="description" class="form-control" value="<?php echo $description; ?>" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="purcharse_cost" class="form-label">Precio</label>
-                            <input type="text" id="purcharse_cost" name="purcharse_cost" class="form-control" value="<?php echo $purcharse_cost; ?>" readonly>
+                            <label for="unit_price" class="form-label">Precio</label>
+                            <input type="text" id="unit_price" name="unit_price" class="form-control" value="<?php echo $unit_price; ?>" readonly>
                         </div>
                 </div>
-            <?php endif; ?>
-            <div class="modal-footer">
-                <button name="delete" type="submit" class="btn btn-success">Eliminar</button>
                 </form>
+            <div class="modal-footer">
+                <button id="delete" name="delete" type="submit" class="btn btn-success">Eliminar</button>
                 <button type="submit" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
@@ -182,7 +175,32 @@ if (isset($_POST['delete'])) {
 </div>
 <!-- /.delete-container -->
 
+<!-- /.confirm-container -->
+<div class="modal show" id="confirmModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">¿Estás seguro?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+                <div class="modal-body">
+                        <div class="form-group">
+                        <label for="name" class="form-label">Estás a punto de <strong>ELIMINAR</strong> el registro del producto con código "<strong><?php echo $product_code ?></strong>"</label>
+                        </div>
+                </div>
+            <div class="modal-footer">
+                <button name="confirm" type="submit" class="btn btn-success" formmethod="POST" form="deleteForm">Guardar</button>
+                <button type="submit" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.confirm-container -->
+
 <script>
+    // Apartir de aqui empieza el codigo de las funciones de los botones del editModalCenter
     // crear el elemento "backdrop"
     var backdrop = document.createElement('div');
     backdrop.className = 'modal-backdrop fade show';
@@ -190,8 +208,8 @@ if (isset($_POST['delete'])) {
     // agregar el elemento "backdrop" al final del <body>
     document.body.appendChild(backdrop);
 
-    document.querySelector('#exampleModalCenter .close').addEventListener('click', function() {
-        document.querySelector('#exampleModalCenter').style.display = 'none';
+    document.querySelector('#deleteModalCenter .close').addEventListener('click', function() {
+        document.querySelector('#deleteModalCenter').style.display = 'none';
 
         // eliminar el elemento "backdrop"
         var backdrop = document.querySelector('.modal-backdrop');
@@ -200,8 +218,8 @@ if (isset($_POST['delete'])) {
         }
     });
 
-    document.querySelector('#exampleModalCenter .btn-danger').addEventListener('click', function() {
-        document.querySelector('#exampleModalCenter').style.display = 'none';
+    document.querySelector('#deleteModalCenter .btn-danger').addEventListener('click', function() {
+        document.querySelector('#deleteModalCenter').style.display = 'none';
 
         // eliminar el elemento "backdrop"
         var backdrop = document.querySelector('.modal-backdrop');
@@ -209,13 +227,32 @@ if (isset($_POST['delete'])) {
             backdrop.remove();
         }
     });
-</script>
 
-<script>
-    function redirectToInsertPage(button) {
-        var productCode = button.getAttribute('data-id');
-        window.location.href = 'insert.php?product_code=' + productCode;
-    }
+    // Apartir de aqui empieza el codigo de las funciones de los botones del confirmModalCenter
+    document.querySelector('#deleteModalCenter #delete').addEventListener('click', function() {
+        document.querySelector('#deleteModalCenter').style.display = 'none';
+        document.querySelector('#confirmModalCenter').style.display = 'block';
+    });
+
+    document.querySelector('#confirmModalCenter .close').addEventListener('click', function() {
+        document.querySelector('#confirmModalCenter').style.display = 'none';
+
+        // eliminar el elemento "backdrop"
+        var backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
+    });
+
+    document.querySelector('#confirmModalCenter .btn-danger').addEventListener('click', function() {
+        document.querySelector('#confirmModalCenter').style.display = 'none';
+
+        // eliminar el elemento "backdrop"
+        var backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
+    });
 </script>
 
 <?php include("../../templates/footer.php"); ?>

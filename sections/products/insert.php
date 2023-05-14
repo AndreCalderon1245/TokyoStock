@@ -33,12 +33,12 @@ if (isset($_POST['insert'])) {
     $gender = (isset($_POST["gender"]) ? $_POST["gender"] : "");
     $stock = (isset($_POST["stock"]) ? $_POST["stock"] : "");
     $description = (isset($_POST["description"]) ? $_POST["description"] : "");
-    $purcharse_cost = (isset($_POST["purcharse_cost"]) ? $_POST["purcharse_cost"] : "");
+    $unit_price = (isset($_POST["unit_price"]) ? $_POST["unit_price"] : "");
 
     $product_code = generateProductCode($name, $color, $size, $gender);
 
     // Prepara la insercción de los datos   
-    $query = "INSERT INTO tbl_product(id, product_code, name, color, size, gender, stock, description, purcharse_cost) VALUES (null, :product_code, :name, :color, :size, :gender, :stock, :description, :purcharse_cost)";
+    $query = "INSERT INTO tbl_product(id, product_code, name, color, size, gender, stock, description, unit_price) VALUES (null, :product_code, :name, :color, :size, :gender, :stock, :description, :unit_price)";
 
     // Asignando los valores que vienen del método POST
     $result = $conexion->prepare($query);
@@ -49,7 +49,7 @@ if (isset($_POST['insert'])) {
     $result->bindParam(":gender", $gender);
     $result->bindParam(":stock", $stock);
     $result->bindParam(":description", $description);
-    $result->bindParam(":purcharse_cost", $purcharse_cost);
+    $result->bindParam(":unit_price", $unit_price);
     $result->execute();
 
     header('Location: index.php');
@@ -107,22 +107,18 @@ if (isset($_POST['insert'])) {
                                     <td style="text-transform: uppercase;"><?php echo $row['gender']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['stock']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['description']; ?></td>
-                                    <td style="text-transform: uppercase;">$ <?php echo $row['purcharse_cost']; ?></td>
-
-                                    <td>
-                                        <button name="decrease" type="button" class="btn btn-danger" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='decrease.php?product_code='+this.getAttribute('data-id')">
+                                    <td style="text-transform: uppercase;">$ <?php echo $row['unit_price']; ?></td>
+                                    <td class="d-inline-flex">
+                                        <button name="decrease" type="button" class="btn btn-danger mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='decrease.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-dash-lg"></i>
                                         </button>
-
-                                        <button name="increase" type="button" class="btn btn-success" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='increase.php?product_code='+this.getAttribute('data-id')">
+                                        <button name="increase" type="button" class="btn btn-success mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='increase.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-plus-lg"></i>
                                         </button>
-
-                                        <button name="edit" type="button" class="btn btn-warning" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='edit.php?product_code='+this.getAttribute('data-id')">
+                                        <button name="edit" type="button" class="btn btn-warning mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='edit.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
-
-                                        <button name="delete" type="button" class="btn btn-secondary" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='delete.php?product_code='+this.getAttribute('data-id')">
+                                        <button name="delete" type="button" class="btn btn-secondary mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='delete.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-trash3"></i>
                                         </button>
                                     </td>
@@ -156,7 +152,6 @@ if (isset($_POST['insert'])) {
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <?php if (isset($row)) : ?>
                 <div class="modal-body">
                     <form action="" method="POST">
                         <!--<div class="form-group">
@@ -193,11 +188,10 @@ if (isset($_POST['insert'])) {
                             <input type="text" id="description" name="description" class="form-control" placeholder="Escribe una descripción" value="" required>
                         </div>
                         <div class="form-group">
-                            <label for="purcharse_cost" class="form-label">Precio:</label>
-                            <input type="text" id="purcharse_cost" name="purcharse_cost" class="form-control" placeholder="Escribe el precio" value="" required>
+                            <label for="unit_price" class="form-label">Precio:</label>
+                            <input type="text" id="unit_price" name="unit_price" class="form-control" placeholder="Escribe el precio" value="" required>
                         </div>
                 </div>
-            <?php endif; ?>
             <div class="modal-footer">
                 <button name="insert" type="submit" class="btn btn-success">Guardar</button>
                 </form>
