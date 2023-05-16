@@ -216,6 +216,18 @@ if (isset($_POST['confirm'])) {
 <!-- /.confirm-container -->
 
 <script>
+    // Función para manejar el evento keydown
+    function bloquearEnter(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Cancelar la acción predeterminada del Enter
+        }
+    }
+
+    // Agregar el event listener al documento
+    document.addEventListener("keydown", bloquearEnter);
+</script>
+
+<script>
     // Apartir de aqui empieza el codigo de las funciones de los botones del editModalCenter
     // crear el elemento "backdrop"
     var backdrop = document.createElement('div');

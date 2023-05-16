@@ -5,7 +5,7 @@ function generateProductCode($name, $color, $size, $gender)
     $nameParts = explode(" ", $name);
     $firstLetters = "";
     foreach ($nameParts as $part) {
-        $firstLetters .= substr($part, 0, 1);
+        $firstLetters .= strtoupper(substr($part, 0, 1));
     }
     $colorCode = substr($color, 0, 1);
     $sizeCode = strtoupper(substr($size, 0, 1));
@@ -186,46 +186,42 @@ if (isset($_POST['insert'])) {
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-                <div class="modal-body">
-                    <form action="" method="POST">
-                        <!--<div class="form-group">
-                            <label for="name" class="form-label">Código del producto:</label>
-                            <input type="text" id="name" name="name" class="form-control" value="" readonly>
-                        </div>-->
-                        <div class="form-group">
-                            <label for="name" class="form-label">Nombre:</label>
-                            <input type="text" id="name" name="name" class="form-control" placeholder="Escribe el nombre" value="" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="color">Color:</label><br>
-                            <input type="text" name="color" id="color" class="form-control" placeholder="Escribe el color" value="" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="size" class="form-label">Tamaño:</label>
-                            <input type="text" id="size" name="size" class="form-control" placeholder="Escribe el tamaño" value="" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="gender" class="form-label">Género:</label>
-                            <select class="form-control" aria-label="Default select example" name="gender" required>
-                                <option selected>Selecciona el género:</option>
-                                <option value="Dama">Dama</option>
-                                <option value="Caballero">Caballero</option>
-                                <option value="Unisex">Unisex</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="stock" class="form-label">Cantidad:</label>
-                            <input type="number" id="stock" name="stock" class="form-control" placeholder="Cantidad de producto" value="" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="description" class="form-label">Descripción;</label>
-                            <input type="text" id="description" name="description" class="form-control" placeholder="Escribe una descripción" value="" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="unit_price" class="form-label">Precio:</label>
-                            <input type="text" id="unit_price" name="unit_price" class="form-control" placeholder="Escribe el precio" value="" required>
-                        </div>
-                </div>
+            <div class="modal-body">
+                <form id="insertForm" action="" method="POST">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Nombre:</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Escribe el nombre" value="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Color:</label><br>
+                        <input type="text" name="color" id="color" class="form-control" placeholder="Escribe el color" value="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="size" class="form-label">Tamaño:</label>
+                        <input type="text" id="size" name="size" class="form-control" placeholder="Escribe el tamaño" value="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender" class="form-label">Género:</label>
+                        <select class="form-control" aria-label="Default select example" id="gender" name="gender" required>
+                            <option selected>Selecciona el género:</option>
+                            <option value="Dama">Dama</option>
+                            <option value="Caballero">Caballero</option>
+                            <option value="Unisex">Unisex</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="stock" class="form-label">Cantidad:</label>
+                        <input type="number" id="stock" name="stock" class="form-control" placeholder="Cantidad de producto" value="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description" class="form-label">Descripción;</label>
+                        <input type="text" id="description" name="description" class="form-control" placeholder="Escribe una descripción" value="" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="unit_price" class="form-label">Precio:</label>
+                        <input type="number" id="unit_price" name="unit_price" class="form-control" placeholder="Escribe el precio" value="" required>
+                    </div>
+            </div>
             <div class="modal-footer">
                 <button name="insert" type="submit" class="btn btn-success">Guardar</button>
                 </form>
@@ -235,6 +231,18 @@ if (isset($_POST['insert'])) {
     </div>
 </div>
 <!-- /.insert-container -->
+
+<script>
+    // Función para manejar el evento keydown
+    function bloquearEnter(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Cancelar la acción predeterminada del Enter
+        }
+    }
+
+    // Agregar el event listener al documento
+    document.addEventListener("keydown", bloquearEnter);
+</script>
 
 <script>
     // crear el elemento "backdrop"

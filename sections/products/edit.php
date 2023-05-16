@@ -91,9 +91,8 @@ if (isset($_POST['confirm'])) {
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Tables</h1>
-    <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
-        For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p>
+    <h1 class="h3 mb-2 text-gray-800">Invetario de productos</h1>
+    <p class="mb-4">Registro de todos los bienes tangibles y en existentes dentro de la empresa, que pueden utilizarse para su alquiler, uso, transformación, consumo o venta.</p>
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -184,8 +183,8 @@ if (isset($_POST['confirm'])) {
             <div class="modal-body">
                 <form id="editForm">
                     <div class="form-group">
-                        <label for="name" class="form-label">Código del producto:</label>
-                        <input type="text" id="name" name="name" class="form-control" value="<?php echo $product_code ?>" readonly>
+                        <label for="product_code" class="form-label">Código del producto:</label>
+                        <input type="text" id="product_code" name="product_code" class="form-control" value="<?php echo $product_code ?>" readonly>
                     </div>
                     <div class="form-group">
                         <label for="name" class="form-label">Nombre:</label>
@@ -201,7 +200,7 @@ if (isset($_POST['confirm'])) {
                     </div>
                     <div class="form-group">
                         <label for="gender" class="form-label">Género:</label>
-                        <select class="form-control" aria-label="Default select example" name="gender" required>
+                        <select class="form-control" aria-label="Default select example" id="gender" name="gender" required>
                             <option selected>Selecciona el género:</option>
                             <option value="Dama" <?php if ($gender == 'Dama') echo 'selected'; ?>>Dama</option>
                             <option value="Caballero" <?php if ($gender == 'Caballero') echo 'selected'; ?>>Caballero</option>
@@ -220,7 +219,7 @@ if (isset($_POST['confirm'])) {
             </div>
             <div class="modal-footer">
                 <button id="edit" name="edit" type="submit" class="btn btn-success" onclick="obtenerValoresFormulario()" disabled>Guardar</button>
-                <button type="submit" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-danger" data-dismiss="modal" >Cancelar</button>
             </div>
         </div>
     </div>
@@ -260,42 +259,38 @@ if (isset($_POST['confirm'])) {
 <!-- /.confirm-container -->
 
 <script>
-    function checkFormChanges() {
-        let form = document.getElementById("editForm");
-        let inputs = form.getElementsByTagName("input");
-        let selects = form.getElementsByTagName("select");
-        let hasChanges = false;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtener los elementos del formulario y el botón de edición
+        var form = document.getElementById('editForm');
+        var inputs = form.querySelectorAll('input, select');
+        var editButton = document.getElementById('edit');
 
-        for (let i = 0; i < inputs.length; i++) {
-            if (inputs[i].defaultValue !== inputs[i].value) {
-                hasChanges = true;
-                break;
-            }
+        // Obtener los valores originales de los campos de entrada
+        var originalValues = {};
+        for (var i = 0; i < inputs.length; i++) {
+            var input = inputs[i];
+            originalValues[input.id] = input.value;
         }
 
-        if (!hasChanges) {
-            for (let i = 0; i < selects.length; i++) {
-                if (selects[i].defaultIndex !== selects[i].selectedIndex) {
+        // Función para comprobar si los valores han cambiado
+        function checkFormChanges() {
+            var hasChanges = false;
+            for (var i = 0; i < inputs.length; i++) {
+                var input = inputs[i];
+                if (input.value !== originalValues[input.id]) {
                     hasChanges = true;
                     break;
                 }
             }
+            editButton.disabled = !hasChanges;
         }
 
-        document.getElementById("edit").disabled = !hasChanges;
-    }
-
-    let form = document.getElementById("editForm");
-    let inputs = form.getElementsByTagName("input");
-    let selects = form.getElementsByTagName("select");
-
-    for (let i = 0; i < inputs.length; i++) {
-        inputs[i].addEventListener("blur", checkFormChanges);
-    }
-
-    for (let i = 0; i < selects.length; i++) {
-        selects[i].addEventListener("blur", checkFormChanges);
-    }
+        // Escuchar los eventos de cambio en los campos de entrada
+        for (var i = 0; i < inputs.length; i++) {
+            var input = inputs[i];
+            input.addEventListener('input', checkFormChanges);
+        }
+    });
 </script>
 
 <script>

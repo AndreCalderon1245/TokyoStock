@@ -6,6 +6,8 @@ if (isset($_GET['product_code'])) {
     $result = $conexion->prepare($query);
     $result->bindParam(":product_code", $product_code);
     $result->execute();
+    $row = $result->fetch(PDO::FETCH_LAZY);
+    $stock = $row["stock"];
 }
 
 if (isset($_POST['confirm'])) {
@@ -13,13 +15,16 @@ if (isset($_POST['confirm'])) {
     $product_code = (isset($_GET['product_code'])) ? $_GET['product_code'] : "";
     $stock = (isset($_POST["stock"]) ? $_POST["stock"] : "");
 
+    $stock_previous = $row["stock"];
+    $stock_final = $stock_previous - $stock;
+
     // Prepara la actualización de los datos   
-    $query = "UPDATE tbl_product SET stock=stock - :stock WHERE product_code=:product_code";
+    $query = "UPDATE tbl_product SET stock=:stock WHERE product_code=:product_code";
 
     // Asignando los valores que vienen del método POST
     $result = $conexion->prepare($query);
     $result->bindParam(":product_code", $product_code);
-    $result->bindParam(":stock", $stock);
+    $result->bindParam(":stock", $stock_final);
     $result->execute();
 
     $logQuery = "INSERT INTO tbl_inventory_log (id, id_user, datetime, event, description, status) VALUES (null, :id_user, :datetime, :event, :description, :status)";
@@ -28,7 +33,7 @@ if (isset($_POST['confirm'])) {
     date_default_timezone_set('America/Guatemala'); // Establece la zona horaria a la Ciudad de Campeche
     $datetime = date("Y-m-d H:i:s"); // Obtiene la fecha y hora actual en la zona horaria especificada
     $event = "Disminución";
-    $description = "Se disminuyo el stock del producto con el código de producto $product_code"; 
+    $description = "Se disminuyo el stock del producto con el código de producto $product_code de $stock_previous -> $stock_final";
     $status = "Autorizado";
     $result = $conexion->prepare($logQuery);
     $result->bindParam(":id_user", $id_user);
@@ -128,37 +133,38 @@ if (isset($_POST['confirm'])) {
 <!-- /.container-fluid -->
 
 <!-- /.edit-container -->
-<div class="modal show" id="increaseModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: block;">
+<div class="modal show" id="decreaseModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: block;">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Salidas de producto</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Entradas de producto</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-                <div class="modal-body">
-                    <form id="increaseForm">
-                        <div class="form-group">
-                            <label for="name" class="form-label">Código del producto:</label>
-                            <input type="text" id="name" name="name" class="form-control" value="<?php echo $product_code ?>" readonly>
+            <div class="modal-body">
+                <form id="decreaseForm">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Código del producto:</label>
+                        <input type="text" id="name" name="name" class="form-control" value="<?php echo $product_code ?>" readonly>
+                        <input type="text" id="stock_start" name="stock_start" class="form-control" value="<?php echo $stock ?>" hidden>
+                    </div>
+                    <div class="form-group">
+                        <label for="stock" class="form-label">Cantidad</label>
+                        <div class="input-group">
+                            <button name="decrease" type="button" class="btn btn-danger" id="decrease-btn">
+                                <i class="bi bi-dash-lg"></i>
+                            </button>
+                            <input type="number" id="stock" name="stock" class="form-control text-center" placeholder="Cantidad de producto" value="0" required>
+                            <button name="increase" type="button" class="btn btn-success" id="increase-btn">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
                         </div>
-                        <div class="form-group">
-                            <label for="stock" class="form-label">Cantidad</label>
-                            <div class="input-group">
-                                <button name="decrease" type="button" class="btn btn-danger" id="decrease-btn">
-                                    <i class="bi bi-dash-lg"></i>
-                                </button>
-                                <input type="number" id="stock" name="stock" class="form-control text-center" placeholder="Cantidad de producto" value="0" required>
-                                <button name="increase" type="button" class="btn btn-success" id="increase-btn">
-                                    <i class="bi bi-plus-lg"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
+            </div>
             <div class="modal-footer">
-                <button id="increase" name="increase" type="submit" class="btn btn-success">Guardar</button>
+                <button id="decrease" name="decrease" type="submit" class="btn btn-success" onclick="mostrarValores()">Guardar</button>
                 <button id="close" name="close" type="submit" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
@@ -176,19 +182,52 @@ if (isset($_POST['confirm'])) {
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-                <div class="modal-body">
-                        <div class="form-group">
-                        <label for="name" class="form-label">Estás a punto de <strong>DISMINUIR</strong> la cantidad del producto con código "<strong><?php echo $product_code ?></strong>"</label>
-                        </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="name" class="form-label">Estás a punto de <strong>DISMINUIR</strong> la cantidad del producto con el código "<strong><?php echo $product_code ?></strong>"</label>
+                    <ul>
+                        <li id="nombreView"><span id="stockInicial"></span></li>
+                        <li id="nombreView"><span id="stockFinal"></span></li>
+                    </ul>
                 </div>
+            </div>
             <div class="modal-footer">
-                <button name="confirm" type="submit" class="btn btn-success" formmethod="POST" form="increaseForm">Guardar</button>
+                <button name="confirm" type="submit" class="btn btn-success" formmethod="POST" form="decreaseForm">Guardar</button>
                 <button type="submit" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
     </div>
 </div>
 <!-- /.confirm-container -->
+
+<script>
+    // Función para manejar el evento keydown
+    function bloquearEnter(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Cancelar la acción predeterminada del Enter
+        }
+    }
+
+    // Agregar el event listener al documento
+    document.addEventListener("keydown", bloquearEnter);
+</script>
+
+<script>
+    function mostrarValores() {
+        var stockStartInput = document.getElementById('stock_start');
+        var stockInput = document.getElementById('stock');
+        var stockInicial = document.getElementById('stockInicial');
+        var stockFinal = document.getElementById('stockFinal');
+
+        var stockStartValue = parseInt(stockStartInput.value, 10);
+        var stockValue = parseInt(stockInput.value, 10);
+
+        var resta = stockStartValue - stockValue;
+
+        stockInicial.textContent = 'Stock Inicial: ' + stockStartValue;
+        stockFinal.textContent = 'Stock Final: ' + resta;
+    }
+</script>
 
 <script>
     // Apartir de aqui empieza el codigo de las funciones de los botones del editModalCenter
@@ -199,8 +238,8 @@ if (isset($_POST['confirm'])) {
     // agregar el elemento "backdrop" al final del <body>
     document.body.appendChild(backdrop);
 
-    document.querySelector('#increaseModalCenter .close').addEventListener('click', function() {
-        document.querySelector('#increaseModalCenter').style.display = 'none';
+    document.querySelector('#decreaseModalCenter .close').addEventListener('click', function() {
+        document.querySelector('#decreaseModalCenter').style.display = 'none';
 
         // eliminar el elemento "backdrop"
         var backdrop = document.querySelector('.modal-backdrop');
@@ -209,8 +248,8 @@ if (isset($_POST['confirm'])) {
         }
     });
 
-    document.querySelector('#increaseModalCenter #close').addEventListener('click', function() {
-        document.querySelector('#increaseModalCenter').style.display = 'none';
+    document.querySelector('#decreaseModalCenter #close').addEventListener('click', function() {
+        document.querySelector('#decreaseModalCenter').style.display = 'none';
 
         // eliminar el elemento "backdrop"
         var backdrop = document.querySelector('.modal-backdrop');
@@ -220,8 +259,8 @@ if (isset($_POST['confirm'])) {
     });
 
     // Apartir de aqui empieza el codigo de las funciones de los botones del confirmModalCenter
-    document.querySelector('#increaseModalCenter #increase').addEventListener('click', function() {
-        document.querySelector('#increaseModalCenter').style.display = 'none';
+    document.querySelector('#decreaseModalCenter #decrease').addEventListener('click', function() {
+        document.querySelector('#decreaseModalCenter').style.display = 'none';
         document.querySelector('#confirmModalCenter').style.display = 'block';
     });
 
