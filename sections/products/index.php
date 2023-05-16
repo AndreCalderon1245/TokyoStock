@@ -46,9 +46,9 @@
                                     <td style="text-transform: uppercase;"><?php echo $row['color']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['size']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['gender']; ?></td>
-                                    <td style="text-transform: uppercase;"><?php echo $row['stock']; ?></td>
+                                    <td style="text-transform: uppercase;"><?php echo $row['stock'];?> unidades</td>
                                     <td style="text-transform: uppercase;"><?php echo $row['description']; ?></td>
-                                    <td style="text-transform: uppercase;">$ <?php echo $row['unit_price']; ?></td>
+                                    <td style="text-transform: uppercase;">$ <?php echo $row['unit_price']; ?> MXN</td>
                                     <td class="d-inline-flex">
                                         <button name="decrease" type="button" class="btn btn-danger mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='decrease.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-dash-lg"></i>

@@ -73,7 +73,6 @@ if (isset($_POST['confirm'])) {
     <h1 class="h3 mb-2 text-gray-800">Invetario de viniles</h1>
     <p class="mb-4">Registro de todos los bienes viniiles tangibles y en existentes dentro de la empresa, que pueden utilizarse su uso, transformación o venta.</p>
 
-    <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex align-items-center justify-content-between">
             <h6 class="m-0 font-weight-bold text-primary">Viniles</h6>
@@ -90,7 +89,7 @@ if (isset($_POST['confirm'])) {
                             <th>Color</th>
                             <th>Tipo</th>
                             <th>Cantidad</th>
-                            <th>Precio unitario</th>
+                            <th>Precio (m²):</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -107,8 +106,8 @@ if (isset($_POST['confirm'])) {
                                     <td style="text-transform: uppercase;"><?php echo $row['vinyl_code']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['color']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['type']; ?></td>
-                                    <td style="text-transform: uppercase;"><?php echo $row['stock']; ?></td>
-                                    <td style="text-transform: uppercase;">$ <?php echo $row['unit_price']; ?></td>
+                                    <td><?php echo $row['stock']; ?> cm²</td>
+                                    <td style="text-transform: uppercase;">$ <?php echo $row['unit_price']; ?> MXN</td>
                                     <td>
                                         <button name="decrease" type="button" class="btn btn-danger mx-1" data-id="<?php echo $row['vinyl_code']; ?>" onclick="window.location.href='decrease.php?vinyl_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-dash-lg"></i>
@@ -139,7 +138,6 @@ if (isset($_POST['confirm'])) {
             </div>
         </div>
     </div>
-
 </div>
 <!-- /.container-fluid -->
 
@@ -164,11 +162,11 @@ if (isset($_POST['confirm'])) {
                         <input type="text" name="color" id="color" class="form-control" placeholder="" value="<?php echo $color ?>" required>
                     </div>
                     <div class="form-group">
-                        <label for="type" class="form-label">Tamaño</label>
+                        <label for="type" class="form-label">Tamaño:</label>
                         <input type="text" id="type" name="type" class="form-control" value="<?php echo $type ?>" required>
                     </div>
                     <div class="form-group">
-                        <label for="unit_price" class="form-label">Precio</label>
+                        <label for="unit_price" class="form-label">Precio (m²):</label>
                         <input type="number" id="unit_price" name="unit_price" class="form-control" value="<?php echo $unit_price; ?>" required>
                     </div>
                 </form>
@@ -194,7 +192,7 @@ if (isset($_POST['confirm'])) {
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="name" class="form-label">Estás a punto de <strong>MODIFICAR</strong> la información del producto con código "<strong><?php echo $vinyl_code ?></strong>"</label>
+                    <label for="name" class="form-label">Estás a punto de <strong>MODIFICAR</strong> la información del vinil con código "<strong><?php echo $vinyl_code ?></strong>"</label>
                     <ul>
                         <li id="colorView" style="display: none;"><span id="colorValor"></span></li>
                         <li id="tipoView" style="display: none;"><span id="tipoValor"></span></li>

@@ -94,9 +94,9 @@ if (isset($_POST['confirm'])) {
                                     <td style="text-transform: uppercase;"><?php echo $row['color']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['size']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['gender']; ?></td>
-                                    <td style="text-transform: uppercase;"><?php echo $row['stock']; ?></td>
+                                    <td style="text-transform: uppercase;"><?php echo $row['stock']; ?> unidades</td>
                                     <td style="text-transform: uppercase;"><?php echo $row['description']; ?></td>
-                                    <td style="text-transform: uppercase;">$ <?php echo $row['unit_price']; ?></td>
+                                    <td style="text-transform: uppercase;">$ <?php echo $row['unit_price']; ?> MXN</td>
                                     <td class="d-inline-flex">
                                         <button name="decrease" type="button" class="btn btn-danger mx-1" data-id="<?php echo $row['product_code']; ?>" onclick="window.location.href='decrease.php?product_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-dash-lg"></i>
@@ -156,7 +156,7 @@ if (isset($_POST['confirm'])) {
                             <input type="text" name="color" id="color" class="form-control" placeholder="" value="<?php echo $color ?>" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="size" class="form-label">Tamaño</label>
+                            <label for="size" class="form-label">Tamaño:</label>
                             <input type="text" id="size" name="size" class="form-control" value="<?php echo $size ?>" readonly>
                         </div>
                         <div class="form-group">
@@ -169,15 +169,15 @@ if (isset($_POST['confirm'])) {
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="stock" class="form-label">Cantidad</label>
+                            <label for="stock" class="form-label">Cantidad (Unidades):</label>
                             <input type="number" id="stock" name="stock" class="form-control" placeholder="Cantidad de producto" value="<?php echo $stock; ?>" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="description" class="form-label">Descripción</label>
+                            <label for="description" class="form-label">Descripción:</label>
                             <input type="text" id="description" name="description" class="form-control" value="<?php echo $description; ?>" readonly>
                         </div>
                         <div class="form-group">
-                            <label for="unit_price" class="form-label">Precio</label>
+                            <label for="unit_price" class="form-label">Precio unitario (MXN):</label>
                             <input type="text" id="unit_price" name="unit_price" class="form-control" value="<?php echo $unit_price; ?>" readonly>
                         </div>
                 </div>

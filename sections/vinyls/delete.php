@@ -68,7 +68,7 @@ if (isset($_POST['confirm'])) {
                             <th>Color</th>
                             <th>Tipo</th>
                             <th>Cantidad</th>
-                            <th>Precio unitario</th>
+                            <th>Precio (m²):</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -85,8 +85,8 @@ if (isset($_POST['confirm'])) {
                                     <td style="text-transform: uppercase;"><?php echo $row['vinyl_code']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['color']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['type']; ?></td>
-                                    <td style="text-transform: uppercase;"><?php echo $row['stock']; ?></td>
-                                    <td style="text-transform: uppercase;">$ <?php echo $row['unit_price']; ?></td>
+                                    <td><?php echo $row['stock']; ?> cm²</td>
+                                    <td style="text-transform: uppercase;">$ <?php echo $row['unit_price']; ?> MXN</td>
                                     <td>
                                         <button name="decrease" type="button" class="btn btn-danger mx-1" data-id="<?php echo $row['vinyl_code']; ?>" onclick="window.location.href='decrease.php?vinyl_code='+this.getAttribute('data-id')">
                                             <i class="bi bi-dash-lg"></i>
@@ -172,7 +172,7 @@ if (isset($_POST['confirm'])) {
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="name" class="form-label">Estás a punto de <strong>ELIMINAR</strong> el registro del producto con código "<strong><?php echo $vinyl_code ?></strong>"</label>
+                        <label for="name" class="form-label">Estás a punto de <strong>ELIMINAR</strong> el registro del vinil con código "<strong><?php echo $vinyl_code ?></strong>"</label>
                     </div>
                 </div>
                 <div class="modal-footer">
