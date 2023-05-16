@@ -25,9 +25,16 @@ if (isset($_POST['confirm'])) {
     $description = (isset($_POST["description"]) ? $_POST["description"] : "");
     $unit_price = (isset($_POST["unit_price"]) ? $_POST["unit_price"] : "");
 
+    // Obtener los valores anteriores
+    $name_previous = $row["name"];
+    $color_previous = $row["color"];
+    $size_previous = $row["size"];
+    $gender_previous = $row["gender"];
+    $description_previous = $row["description"];
+    $unit_price_previous = $row["unit_price"];
+
     // Prepara la insercción de los datos   
     $query = "UPDATE tbl_product SET name=:name, color=:color, size=:size, gender=:gender, description=:description, unit_price=:unit_price WHERE product_code=:product_code";
-
     // Asignando los valores que vienen del método POST
     $result = $conexion->prepare($query);
     $result->bindParam(":product_code", $product_code);
@@ -37,6 +44,41 @@ if (isset($_POST['confirm'])) {
     $result->bindParam(":gender", $gender);
     $result->bindParam(":description", $description);
     $result->bindParam(":unit_price", $unit_price);
+    $result->execute();
+
+    $description_log = "Se ha modificado el registro para el producto con el código de producto ・ $product_code";
+    if ($name_previous !== $name) {
+        $description_log .= "・ $name_previous -> $name ";
+    }
+    if ($color_previous !== $color) {
+        $description_log .= "・ $color_previous -> $color ";
+    }
+    if ($size_previous !== $size) {
+        $description_log .= "・ $size_previous -> $size ";
+    }
+    if ($gender_previous !== $gender) {
+        $description_log .= "・ $gender_previous -> $gender ";
+    }
+    if ($description_previous !== $description) {
+        $description_log .= "・ $description_previous -> $description ";
+    }
+    if ($unit_price_previous !== $unit_price) {
+        $description_log .= "・ $unit_price_previous -> $unit_price";
+    }
+
+    $logQuery = "INSERT INTO tbl_inventory_log (id, id_user, datetime, event, description, status) VALUES (null, :id_user, :datetime, :event, :description, :status)";
+    // Asignando los valores que vienen del método POST
+    $id_user = "1";
+    date_default_timezone_set('America/Guatemala'); // Establece la zona horaria a la Ciudad de Campeche
+    $datetime = date("Y-m-d H:i:s"); // Obtiene la fecha y hora actual en la zona horaria especificada
+    $event = "Modificación";
+    $status = "Autorizado";
+    $result = $conexion->prepare($logQuery);
+    $result->bindParam(":id_user", $id_user);
+    $result->bindParam(":datetime", $datetime);
+    $result->bindParam(":event", $event);
+    $result->bindParam(":description", $description_log);
+    $result->bindParam(":status", $status);
     $result->execute();
 
     header('Location: index.php');
@@ -139,45 +181,45 @@ if (isset($_POST['confirm'])) {
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-                <div class="modal-body">
-                    <form id="editForm">
-                        <div class="form-group">
-                            <label for="name" class="form-label">Código del producto:</label>
-                            <input type="text" id="name" name="name" class="form-control" value="<?php echo $product_code ?>" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="name" class="form-label">Nombre:</label>
-                            <input type="text" id="name" name="name" class="form-control" value="<?php echo $name ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="color">Color:</label><br>
-                            <input type="text" name="color" id="color" class="form-control" placeholder="" value="<?php echo $color ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="size" class="form-label">Tamaño</label>
-                            <input type="text" id="size" name="size" class="form-control" value="<?php echo $size ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="gender" class="form-label">Género:</label>
-                            <select class="form-control" aria-label="Default select example" name="gender" required>
-                                <option selected>Selecciona el género:</option>
-                                <option value="Dama" <?php if ($gender == 'Dama') echo 'selected'; ?>>Dama</option>
-                                <option value="Caballero" <?php if ($gender == 'Caballero') echo 'selected'; ?>>Caballero</option>
-                                <option value="Unisex" <?php if ($gender == 'Unisex') echo 'selected'; ?>>Unisex</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="description" class="form-label">Descripción</label>
-                            <input type="text" id="description" name="description" class="form-control" value="<?php echo $description; ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="unit_price" class="form-label">Precio</label>
-                            <input type="text" id="unit_price" name="unit_price" class="form-control" value="<?php echo $unit_price; ?>" required>
-                        </div>
-                    </form>
-                </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Código del producto:</label>
+                        <input type="text" id="name" name="name" class="form-control" value="<?php echo $product_code ?>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="form-label">Nombre:</label>
+                        <input type="text" id="name" name="name" class="form-control" value="<?php echo $name ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Color:</label><br>
+                        <input type="text" name="color" id="color" class="form-control" placeholder="" value="<?php echo $color ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="size" class="form-label">Tamaño</label>
+                        <input type="text" id="size" name="size" class="form-control" value="<?php echo $size ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender" class="form-label">Género:</label>
+                        <select class="form-control" aria-label="Default select example" name="gender" required>
+                            <option selected>Selecciona el género:</option>
+                            <option value="Dama" <?php if ($gender == 'Dama') echo 'selected'; ?>>Dama</option>
+                            <option value="Caballero" <?php if ($gender == 'Caballero') echo 'selected'; ?>>Caballero</option>
+                            <option value="Unisex" <?php if ($gender == 'Unisex') echo 'selected'; ?>>Unisex</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="description" class="form-label">Descripción</label>
+                        <input type="text" id="description" name="description" class="form-control" value="<?php echo $description; ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="unit_price" class="form-label">Precio</label>
+                        <input type="number" id="unit_price" name="unit_price" class="form-control" value="<?php echo $unit_price; ?>" required>
+                    </div>
+                </form>
+            </div>
             <div class="modal-footer">
-                <button id="edit" name="edit" type="submit" class="btn btn-success">Guardar</button>
+                <button id="edit" name="edit" type="submit" class="btn btn-success" onclick="obtenerValoresFormulario()" disabled>Guardar</button>
                 <button type="submit" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
             </div>
         </div>
@@ -195,11 +237,19 @@ if (isset($_POST['confirm'])) {
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-                <div class="modal-body">
-                        <div class="form-group">
-                        <label for="name" class="form-label">Estás a punto de <strong>MODIFICAR</strong> la información del producto con código "<strong><?php echo $product_code ?></strong>"</label>
-                        </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="name" class="form-label">Estás a punto de <strong>MODIFICAR</strong> la información del producto con código "<strong><?php echo $product_code ?></strong>"</label>
+                    <ul>
+                        <li id="nombreView" style="display: none;"><span id="nombreValor"></span></li>
+                        <li id="colorView" style="display: none;"><span id="colorValor"></span></li>
+                        <li id="tamanoView" style="display: none;"><span id="tamanoValor"></span></li>
+                        <li id="generoView" style="display: none;"><span id="generoValor"></span></li>
+                        <li id="descripcionView" style="display: none;"><span id="descripcionValor"></span></li>
+                        <li id="precioView" style="display: none;"><span id="precioValor"></span></li>
+                    </ul>
                 </div>
+            </div>
             <div class="modal-footer">
                 <button name="confirm" type="submit" class="btn btn-success" formmethod="POST" form="editForm">Guardar</button>
                 <button type="submit" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
@@ -209,6 +259,110 @@ if (isset($_POST['confirm'])) {
 </div>
 <!-- /.confirm-container -->
 
+<script>
+    function checkFormChanges() {
+        let form = document.getElementById("editForm");
+        let inputs = form.getElementsByTagName("input");
+        let selects = form.getElementsByTagName("select");
+        let hasChanges = false;
+
+        for (let i = 0; i < inputs.length; i++) {
+            if (inputs[i].defaultValue !== inputs[i].value) {
+                hasChanges = true;
+                break;
+            }
+        }
+
+        if (!hasChanges) {
+            for (let i = 0; i < selects.length; i++) {
+                if (selects[i].defaultIndex !== selects[i].selectedIndex) {
+                    hasChanges = true;
+                    break;
+                }
+            }
+        }
+
+        document.getElementById("edit").disabled = !hasChanges;
+    }
+
+    let form = document.getElementById("editForm");
+    let inputs = form.getElementsByTagName("input");
+    let selects = form.getElementsByTagName("select");
+
+    for (let i = 0; i < inputs.length; i++) {
+        inputs[i].addEventListener("blur", checkFormChanges);
+    }
+
+    for (let i = 0; i < selects.length; i++) {
+        selects[i].addEventListener("blur", checkFormChanges);
+    }
+</script>
+
+<script>
+    // Función para manejar el evento keydown
+    function bloquearEnter(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Cancelar la acción predeterminada del Enter
+        }
+    }
+
+    // Agregar el event listener al documento
+    document.addEventListener("keydown", bloquearEnter);
+</script>
+
+<!-- /.inputs-container -->
+<script>
+    function obtenerValoresFormulario() {
+        var formulario = document.getElementById("editForm");
+        var inputs = formulario.getElementsByTagName("input");
+        var selects = formulario.getElementsByTagName("select");
+
+        var valores = {};
+
+        // Obtener los valores de los inputs
+        for (var i = 0; i < inputs.length; i++) {
+            var input = inputs[i];
+            valores[input.getAttribute("name")] = input.value;
+        }
+
+        // Obtener los valores de los selects
+        for (var i = 0; i < selects.length; i++) {
+            var select = selects[i];
+            valores[select.getAttribute("name")] = select.value;
+        }
+
+        // Mostrar los valores en los elementos correspondientes si son diferentes a los valores originales
+        if (valores.name !== "<?php echo $name ?>") {
+            document.getElementById("nombreValor").textContent = "Nombre: <?php echo $name ?> -> " + valores.name;
+            document.getElementById("nombreView").style.display = "";
+        }
+        if (valores.color !== "<?php echo $color ?>") {
+            document.getElementById("colorValor").textContent = "Color: <?php echo $color ?> -> " + valores.color;
+            document.getElementById("colorView").style.display = "";
+        }
+        if (valores.size !== "<?php echo $size ?>") {
+            document.getElementById("tamanoValor").textContent = "Tamaño: <?php echo $size ?> -> " + valores.size;
+            document.getElementById("tamanoView").style.display = "";
+        }
+        if (valores.gender !== "<?php echo $gender ?>") {
+            document.getElementById("generoValor").textContent = "Género: <?php echo $gender ?> -> " + valores.gender;
+            document.getElementById("generoView").style.display = "";
+        }
+        if (valores.description !== "<?php echo $description ?>") {
+            document.getElementById("descripcionValor").textContent = "Descripción: <?php echo $description ?> -> " + valores.description;
+            document.getElementById("descripcionView").style.display = "";
+        }
+        if (valores.unit_price !== "<?php echo $unit_price ?>") {
+            document.getElementById("precioValor").textContent = "Precio unitario: <?php echo $unit_price ?> -> " + valores.unit_price;
+            document.getElementById("precioView").style.display = "";
+        }
+
+        return valores;
+    }
+</script>
+<!-- /.inputs-container -->
+
+<!-- /.modal-container -->
 <script>
     // Apartir de aqui empieza el codigo de las funciones de los botones del editModalCenter
     // crear el elemento "backdrop"
@@ -264,5 +418,5 @@ if (isset($_POST['confirm'])) {
         }
     });
 </script>
-<!-- /.edit-container -->
+<!-- /.modal-container -->
 <?php include("../../templates/footer.php"); ?>

@@ -28,6 +28,22 @@ if (isset($_POST['confirm'])) {
     $result->bindParam(":product_code", $product_code);
     $result->execute();
 
+    $logQuery = "INSERT INTO tbl_inventory_log (id, id_user, datetime, event, description, status) VALUES (null, :id_user, :datetime, :event, :description, :status)";
+    // Asignando los valores que vienen del método POST
+    $id_user = "1";
+    date_default_timezone_set('America/Guatemala'); // Establece la zona horaria a la Ciudad de Campeche
+    $datetime = date("Y-m-d H:i:s"); // Obtiene la fecha y hora actual en la zona horaria especificada
+    $event = "Eliminación";
+    $description = "Se ha removido el registro del producto con el código de producto $product_code"; 
+    $status = "Autorizado";
+    $result = $conexion->prepare($logQuery);
+    $result->bindParam(":id_user", $id_user);
+    $result->bindParam(":datetime", $datetime);
+    $result->bindParam(":event", $event);
+    $result->bindParam(":description", $description);
+    $result->bindParam(":status", $status);
+    $result->execute();
+
     header('Location: index.php');
 }
 ?>
@@ -36,9 +52,8 @@ if (isset($_POST['confirm'])) {
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Tables</h1>
-    <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
-        For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p>
+    <h1 class="h3 mb-2 text-gray-800">Invetario de productos</h1>
+    <p class="mb-4">Registro de todos los bienes tangibles y en existentes dentro de la empresa, que pueden utilizarse para su alquiler, uso, transformación, consumo o venta.</p>
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -73,7 +88,7 @@ if (isset($_POST['confirm'])) {
                         if (count($result) > 0) { // verificar si hay resultados
                             foreach ($result as $row) {
                         ?>
-                                <td class="d-inline-flex">
+                                <tr>
                                     <td style="text-transform: uppercase;"><?php echo $row['product_code']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['name']; ?></td>
                                     <td style="text-transform: uppercase;"><?php echo $row['color']; ?></td>
@@ -112,6 +127,7 @@ if (isset($_POST['confirm'])) {
             </div>
         </div>
     </div>
+
 </div>
 <!-- /.container-fluid -->
 

@@ -38,7 +38,7 @@ if (isset($_POST['insert'])) {
     $product_code = generateProductCode($name, $color, $size, $gender);
 
     // Prepara la insercción de los datos   
-    $query = "INSERT INTO tbl_product(id, product_code, name, color, size, gender, stock, description, unit_price) VALUES (null, :product_code, :name, :color, :size, :gender, :stock, :description, :unit_price)";
+    $query = "INSERT INTO tbl_product(product_code, name, color, size, gender, stock, description, unit_price) VALUES (:product_code, :name, :color, :size, :gender, :stock, :description, :unit_price)";
 
     // Asignando los valores que vienen del método POST
     $result = $conexion->prepare($query);
@@ -52,6 +52,41 @@ if (isset($_POST['insert'])) {
     $result->bindParam(":unit_price", $unit_price);
     $result->execute();
 
+    $description_log = "Se ha creado el registro para el producto ・ $product_code";
+    if ($name_previous !== $name) {
+        $description_log .= "・ $name ";
+    }
+    if ($color_previous !== $color) {
+        $description_log .= "・ $color ";
+    }
+    if ($size_previous !== $size) {
+        $description_log .= "・ $size ";
+    }
+    if ($gender_previous !== $gender) {
+        $description_log .= "・ $gender ";
+    }
+    if ($description_previous !== $description) {
+        $description_log .= "・ $description ";
+    }
+    if ($unit_price_previous !== $unit_price) {
+        $description_log .= "・ $unit_price";
+    }
+
+    $logQuery = "INSERT INTO tbl_inventory_log (id, id_user, datetime, event, description, status) VALUES (null, :id_user, :datetime, :event, :description, :status)";
+    // Asignando los valores que vienen del método POST
+    $id_user = "1";
+    date_default_timezone_set('America/Guatemala'); // Establece la zona horaria a la Ciudad de Campeche
+    $datetime = date("Y-m-d H:i:s"); // Obtiene la fecha y hora actual en la zona horaria especificada
+    $event = "Insertado";
+    $status = "Autorizado";
+    $result = $conexion->prepare($logQuery);
+    $result->bindParam(":id_user", $id_user);
+    $result->bindParam(":datetime", $datetime);
+    $result->bindParam(":event", $event);
+    $result->bindParam(":description", $description_log);
+    $result->bindParam(":status", $status);
+    $result->execute();
+
     header('Location: index.php');
 }
 ?>
@@ -62,9 +97,8 @@ if (isset($_POST['insert'])) {
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h1 class="h3 mb-2 text-gray-800">Tables</h1>
-    <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
-        For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p>
+    <h1 class="h3 mb-2 text-gray-800">Invetario de productos</h1>
+    <p class="mb-4">Registro de todos los bienes tangibles y en existentes dentro de la empresa, que pueden utilizarse para su alquiler, uso, transformación, consumo o venta.</p>
 
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -168,7 +202,7 @@ if (isset($_POST['insert'])) {
                         </div>
                         <div class="form-group">
                             <label for="size" class="form-label">Tamaño:</label>
-                            <input type="text" id="size" name="size" class="form-control" placeholder="Escribe el tamaño" value="Escribe el tamaño" required>
+                            <input type="text" id="size" name="size" class="form-control" placeholder="Escribe el tamaño" value="" required>
                         </div>
                         <div class="form-group">
                             <label for="gender" class="form-label">Género:</label>
