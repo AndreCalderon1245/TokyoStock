@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Tokio Stock</title>
+    <title>Tokyo Stock</title>
 
     <!-- Custom fonts for this template-->
     <link rel="icon" type="image/png" href="../../img/tokyo-logo.png">
@@ -74,11 +74,11 @@
             </li>
 
             <!-- Nav Item - Charts -->
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="charts.html">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Gráficos</span></a>
-            </li>
+            </li> -->
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
